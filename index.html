@@ -113,11 +113,11 @@
 
     <div class="player-controls">
         <div class="progress-bar">
-            <span class="progress-time current-time">0:00</span>
+            <!--<span class="progress-time current-time">0:00</span>-->
             <div class="progress-line">
                 <div class="progress"></div>
             </div>
-            <span class="progress-time total-time">0:00</span>
+            <!--<span class="progress-time total-time">0:00</span>-->
         </div>
 
         <div class="current-song-info">
@@ -126,6 +126,11 @@
                 <div id="current-song">Nenhuma música selecionada</div>
                 <div id="current-artist">-</div>
             </div>
+            <div>
+                 <span class="progress-time current-time">0:00</span> <strong class="progress-time">/</strong>
+                 <span class="progress-time total-time">0:00</span>
+            </div>
+            <button id="share-btn" class="control-btn" title="Compartilhar"><i class="fas fa-ellipsis-v"></i></button>
         </div>
 
         <div class="controls">
@@ -134,7 +139,7 @@
             <button id="play-btn"><i class="fas fa-play"></i></button>
             <button id="next-btn"><i class="fas fa-forward"></i></button>
             <button id="repeat-btn" class="control-btn"><i class="fas fa-redo"></i></button>
-            <button id="share-btn" class="control-btn" title="Compartilhar"><i class="fas fa-share"></i></button>
+            
         </div>
     </div>
 

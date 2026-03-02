@@ -338,19 +338,19 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: clamp(0.75rem, 2vw, 1.5rem);
-  z-index: 1000;
+  z-index: 2000;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .progress-bar {
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
   right: 0;
   display: flex;
   align-items: center;
   gap: clamp(0.5rem, 1.5vw, 0.75rem);
-  padding: 0 clamp(0.5rem, 1.5vw, 1rem);
+  /*padding: 0 clamp(0.5rem, 1.5vw, 1rem);*/
   height: clamp(1.25rem, 2vw, 1.5rem);
   justify-content: space-between;
 }
@@ -412,7 +412,7 @@ body {
   gap: clamp(0.75rem, 2vw, 1.25rem);
   flex: 1;
   min-width: 0;
-  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+  /*margin-top: clamp(0.5rem, 1.5vw, 0.75rem);*/
 }
 
 #current-thumbnail {
@@ -456,7 +456,9 @@ body {
   gap: clamp(0.75rem, 2vw, 1.5rem);
   align-items: center;
 }
-
+#share-btn {
+  background: none;  
+}
 .controls button {
   background: rgba(78, 84, 255, 0.2);
   border: 1px solid rgba(78, 84, 255, 0.3);
@@ -716,7 +718,7 @@ button:hover {
   .modal-content {
     flex-direction: row;
     justify-content: space-around;
-    align-items: flex-start;
+    /*align-items: flex-start;*/
   }
 
   .modal-album-art {
