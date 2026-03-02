@@ -21,7 +21,7 @@ const suggestedPlaylists = document.getElementById('suggested-playlists');
 const progressBar = document.querySelector('.progress-line');
 const progress = document.querySelector('.progress');
 const currentTimeElement = document.querySelector('.current-time');
-const durationElement = document.querySelector('.duration');
+const durationElement = document.querySelector('.total-time');
 const shuffleBtn = document.getElementById('shuffle-btn');
 const repeatBtn = document.getElementById('repeat-btn');
 
