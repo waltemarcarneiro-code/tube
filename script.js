@@ -8,6 +8,7 @@ let player = null;
 let isShuffleActive = false;
 let isRepeatActive = false;
 let progressInterval;
+let isModalOpen = false;
 
 // Elementos do DOM
 const menuBtn = document.getElementById('menu-btn');
@@ -24,6 +25,22 @@ const currentTimeElement = document.querySelector('.current-time');
 const durationElement = document.querySelector('.total-time');
 const shuffleBtn = document.getElementById('shuffle-btn');
 const repeatBtn = document.getElementById('repeat-btn');
+
+// Modal elements
+const nowPlayingModal = document.getElementById('now-playing-modal');
+const minimizeModalBtn = document.getElementById('minimize-modal-btn');
+const shareModal = document.getElementById('share-modal');
+const shareBtn = document.getElementById('share-btn');
+const closeShareModalBtn = document.getElementById('close-share-modal');
+const shareSongBtn = document.getElementById('share-song-btn');
+const sharePlaylistBtn = document.getElementById('share-playlist-btn');
+const shareCopyLinkBtn = document.getElementById('share-copy-link-btn');
+const currentThumbnailPlayer = document.getElementById('current-thumbnail');
+const modalThumbnail = document.getElementById('modal-thumbnail');
+const modalSongTitle = document.getElementById('modal-song-title');
+const modalSongArtist = document.getElementById('modal-song-artist');
+const currentSongInfoElement = document.querySelector('.current-song-info');
+const modalPlaylistList = document.getElementById('modal-playlist-list');
 
 // Controle do menu
 menuBtn.addEventListener('click', () => {
@@ -90,6 +107,101 @@ document.addEventListener('click', (e) => {
         sideMenu.classList.remove('active');
     }
 });
+
+// Modal controls
+minimizeModalBtn.addEventListener('click', () => {
+    closeNowPlayingModal();
+});
+
+shareBtn.addEventListener('click', () => {
+    shareModal.classList.add('active');
+});
+
+closeShareModalBtn.addEventListener('click', () => {
+    shareModal.classList.remove('active');
+});
+
+// Close share modal when clicking outside
+shareModal.addEventListener('click', (e) => {
+    if (e.target === shareModal) {
+        shareModal.classList.remove('active');
+    }
+});
+
+// Share options
+shareSongBtn.addEventListener('click', () => {
+    if (currentPlaylist && currentSongIndex < currentPlaylist.songs.length) {
+        const song = currentPlaylist.songs[currentSongIndex];
+        const shareText = `🎵 Escutando: ${song.title} - ${song.artist}`;
+        copyToClipboard(shareText);
+        alert('Música compartilhada copiada!');
+        shareModal.classList.remove('active');
+    }
+});
+
+sharePlaylistBtn.addEventListener('click', () => {
+    if (currentPlaylist) {
+        const shareText = `🎶 Playlist: ${currentPlaylist.name} - ${currentPlaylist.songs.length} músicas`;
+        copyToClipboard(shareText);
+        alert('Link da playlist copiado!');
+        shareModal.classList.remove('active');
+    }
+});
+
+shareCopyLinkBtn.addEventListener('click', () => {
+    const currentUrl = window.location.href;
+    copyToClipboard(currentUrl);
+    alert('Link copiado para a área de transferência!');
+    shareModal.classList.remove('active');
+});
+
+// Click on thumbnail or info to open modal
+currentThumbnailPlayer.addEventListener('click', openNowPlayingModal);
+currentSongInfoElement.addEventListener('click', openNowPlayingModal);
+modalThumbnail.addEventListener('click', closeNowPlayingModal);
+
+// Modal functions
+function openNowPlayingModal() {
+    if (!currentPlaylist || currentSongIndex >= currentPlaylist.songs.length) return;
+    
+    const song = currentPlaylist.songs[currentSongIndex];
+    modalThumbnail.src = song.thumbnail;
+    modalSongTitle.textContent = song.title;
+    modalSongArtist.textContent = song.artist;
+    
+    // Load playlist for PC view
+    loadPlaylistInModal();
+    
+    nowPlayingModal.classList.add('active');
+    isModalOpen = true;
+    document.body.classList.add('modal-open');
+}
+
+function closeNowPlayingModal() {
+    nowPlayingModal.classList.remove('active');
+    isModalOpen = false;
+    document.body.classList.remove('modal-open');
+}
+
+function loadPlaylistInModal() {
+    if (!currentPlaylist) return;
+    
+    modalPlaylistList.innerHTML = currentPlaylist.songs.map((song, index) => `
+        <div class="playlist-item-modal ${currentSongIndex === index ? 'active' : ''}" onclick="loadSong(${index})">
+            <img src="${song.thumbnail}" alt="${song.title}">
+            <div class="playlist-item-modal-info">
+                <div class="playlist-item-modal-title">${song.title}</div>
+                <div class="playlist-item-modal-artist">${song.artist}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).catch(err => {
+        console.error('Erro ao copiar:', err);
+    });
+}
 
 // Adicione esta função que será chamada automaticamente quando a API do YouTube carregar
 function onYouTubeIframeAPIReady() {
@@ -268,6 +380,21 @@ function displaySongs() {
             </div>
         </div>
     `).join('');
+    
+    // Highlight current song
+    updateActiveItem();
+}
+
+// Função para atualizar item ativo
+function updateActiveItem() {
+    const allSongs = document.querySelectorAll('.song-item');
+    allSongs.forEach((song, index) => {
+        if (index === currentSongIndex) {
+            song.classList.add('active');
+        } else {
+            song.classList.remove('active');
+        }
+    });
 }
 
 // Função para carregar música
@@ -281,11 +408,25 @@ function loadSong(index) {
     document.getElementById('current-song').textContent = song.title;
     document.getElementById('current-artist').textContent = song.artist;
 
+    // Atualizar modal
+    modalThumbnail.src = song.thumbnail;
+    modalSongTitle.textContent = song.title;
+    modalSongArtist.textContent = song.artist;
+    loadPlaylistInModal();
+    
+    // Atualizar item ativo na galeria
+    updateActiveItem();
+
     // Carrega e reproduz o vídeo usando o player do YouTube
     if (player && player.loadVideoById) {
         player.loadVideoById(song.id);
         isPlaying = true;
         updatePlayButton();
+    }
+    
+    // Abrir modal automaticamente em modo celular
+    if (window.innerWidth <= 768) {
+        openNowPlayingModal();
     }
 }
 
